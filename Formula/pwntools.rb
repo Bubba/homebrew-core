@@ -18,9 +18,7 @@ class Pwntools < Formula
   depends_on "openssl"
   depends_on "binutils" => :recommended
 
-  if Tab.for_name("moreutils").with?("errno")
-    conflicts_with "moreutils", :because => "Both install `errno` binaries"
-  end
+  conflicts_with "moreutils", :because => "Both install `errno` binaries"
 
   def install
     venv = virtualenv_create(libexec)

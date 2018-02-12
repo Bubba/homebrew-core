@@ -13,6 +13,7 @@ class Opencolorio < Formula
   end
 
   option "with-test", "Verify the build with its unit tests (~1min)"
+  option "with-java", "Build ocio with java bindings"
   option "with-docs", "Build the documentation"
 
   deprecated_option "with-tests" => "with-test"
@@ -24,6 +25,7 @@ class Opencolorio < Formula
 
   def install
     args = std_cmake_args
+    args << "-DOCIO_BUILD_JNIGLUE=ON" if build.with? "java"
     args << "-DOCIO_BUILD_TESTS=ON" if build.with? "test"
     args << "-DOCIO_BUILD_DOCS=ON" if build.with? "docs"
     args << "-DCMAKE_VERBOSE_MAKEFILE=OFF"

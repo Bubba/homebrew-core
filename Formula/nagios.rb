@@ -54,8 +54,7 @@ class Nagios < Formula
                           "--with-nagios-group='#{group}'",
                           "--with-command-user=#{user}",
                           "--with-command-group=_www",
-                          "--with-httpd-conf=#{share}",
-                          "--disable-libtool"
+                          "--with-httpd-conf=#{share}"
     system "make", "all"
     system "make", "install"
 

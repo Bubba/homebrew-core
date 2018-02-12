@@ -1,3 +1,5 @@
+require "language/go"
+
 class MongodbAT34 < Formula
   desc "High-performance, schema-free, document-oriented database"
   homepage "https://www.mongodb.org/"
@@ -22,6 +24,13 @@ class MongodbAT34 < Formula
   depends_on "scons" => :build
   depends_on "openssl" => :recommended
 
+  go_resource "github.com/mongodb/mongo-tools" do
+    url "https://github.com/mongodb/mongo-tools.git",
+        :tag => "r3.4.10",
+        :revision => "4f093ae71cdb4c6a6e9de7cd1dc67ea4405f0013",
+        :shallow => false
+  end
+
   needs :cxx11
 
   def install
@@ -33,13 +42,9 @@ class MongodbAT34 < Formula
 
     # New Go tools have their own build script but the server scons "install" target is still
     # responsible for installing them.
+    Language::Go.stage_deps resources, buildpath/"src"
 
-    cd "src/mongo/gotools" do
-      inreplace "build.sh" do |s|
-        s.gsub! "$(git describe)", version.to_s
-        s.gsub! "$(git rev-parse HEAD)", "homebrew"
-      end
-
+    cd "src/github.com/mongodb/mongo-tools" do
       args = %w[]
 
       if build.with? "openssl"
@@ -53,7 +58,8 @@ class MongodbAT34 < Formula
       system "./build.sh", *args
     end
 
-    (buildpath/"src/mongo-tools").install Dir["src/mongo/gotools/bin/*"]
+    mkdir "src/mongo-tools"
+    cp Dir["src/github.com/mongodb/mongo-tools/bin/*"], "src/mongo-tools/"
 
     args = %W[
       --prefix=#{prefix}
