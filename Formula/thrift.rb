@@ -33,11 +33,6 @@ class Thrift < Formula
   depends_on "libevent" => :optional
   depends_on "python" => :optional
 
-  if build.with? "java"
-    depends_on "ant" => :build
-    depends_on :java => "1.8"
-  end
-
   def install
     system "./bootstrap.sh" unless build.stable?
 
@@ -55,7 +50,6 @@ class Thrift < Formula
     # Don't install extensions to /usr:
     ENV["PY_PREFIX"] = prefix
     ENV["PHP_PREFIX"] = prefix
-    ENV["JAVA_PREFIX"] = buildpath
 
     system "./configure", "--disable-debug",
                           "--prefix=#{prefix}",
@@ -65,10 +59,6 @@ class Thrift < Formula
     ENV.deparallelize
     system "make"
     system "make", "install"
-
-    # Even when given a prefix to use it creates /usr/local/lib inside
-    # that dir & places the jars there, so we need to work around that.
-    (pkgshare/"java").install Dir["usr/local/lib/*.jar"] if build.with? "java"
   end
 
   def caveats; <<~EOS
